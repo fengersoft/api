@@ -125,6 +125,7 @@ bool SqliteWrapper::execute(QString sql)
     bool ret = qry.exec(sql);
     if (!ret) {
         qDebug() << sql;
+        qDebug() << qry.lastError().text();
     }
     return ret;
 }

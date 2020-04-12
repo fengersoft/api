@@ -3,6 +3,7 @@
 
 #include "sqldef.h"
 #include <QObject>
+#include <QSqlError>
 #include <QStandardItemModel>
 #include <QtDebug>
 #include <QtSql/QSqlDatabase>

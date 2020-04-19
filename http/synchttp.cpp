@@ -5,6 +5,10 @@ SyncHttp::SyncHttp(QWidget* parent)
 {
 }
 
+bool SyncHttp::downloadFile(QString url, QString path)
+{
+}
+
 void SyncHttp::setIpAndPort(const QString& ip, int port, QString protocol)
 {
     m_baseUrl = QString("%1://%2:%3/").arg(protocol).arg(ip).arg(port);
@@ -36,6 +40,24 @@ int SyncHttp::getJsonData(const QString& params, QByteArray& ret)
     QNetworkRequest requet;
     requet.setUrl(QUrl(m_baseUrl + params));
     requet.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QNetworkReply* reply = manager->get(requet);
+    QEventLoop loop;
+    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+    ret = reply->readAll();
+    int code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    delete reply;
+    delete manager;
+    return code;
+}
+
+int SyncHttp::getHtmlData(const QString& url, QByteArray& ret)
+{
+    QNetworkAccessManager* manager = new QNetworkAccessManager();
+    QNetworkRequest requet;
+    requet.setUrl(QUrl(url));
+
     QNetworkReply* reply = manager->get(requet);
     QEventLoop loop;
     connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);

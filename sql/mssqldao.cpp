@@ -100,10 +100,12 @@ void MsSQLDao::execute(QString sql)
 {
     QSqlQuery qry(m_DbInstance);
     int ret = qry.exec(sql);
-    qDebug() << sql;
+
     if (ret == false) {
         qDebug() << sql;
         qDebug() << qry.lastError();
+    } else {
+        qDebug() << sql;
     }
 }
 

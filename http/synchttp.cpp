@@ -7,6 +7,7 @@ SyncHttp::SyncHttp(QWidget* parent)
 
 bool SyncHttp::downloadFile(QString url, QString path)
 {
+    return true;
 }
 
 void SyncHttp::setIpAndPort(const QString& ip, int port, QString protocol)

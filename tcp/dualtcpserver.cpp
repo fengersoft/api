@@ -11,11 +11,15 @@ DualTcpServer::DualTcpServer(QObject* parent)
 
 bool DualTcpServer::startServer(QString ip, int port, int subPort)
 {
+    if (tcpServer->isListening()) {
+        return false;
+    }
     m_ip = ip;
     m_port = port;
     m_subPort = subPort;
     tcpServer->listen(QHostAddress::Any, m_port);
     subTcpServer->listen(QHostAddress::Any, m_subPort);
+    return true;
 }
 
 void DualTcpServer::writeLn(QString s)

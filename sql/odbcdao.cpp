@@ -44,7 +44,7 @@ void ODBCDao::loadConfig()
 }
 
 ODBCDao::ODBCDao(QObject* parent)
-    : QObject(parent)
+    : AbstractDao(parent)
 {
     m_dbtype = "DM";
 }
@@ -59,8 +59,39 @@ void ODBCDao::setDbtype(const QString& dbtype)
     m_dbtype = dbtype;
 }
 
+QString ODBCDao::dbname() const
+{
+    return m_dbname;
+}
+
+void ODBCDao::setDbname(const QString& dbname)
+{
+    m_dbname = dbname;
+}
+
+bool ODBCDao::select(QString sql, QSqlQuery& qry)
+{
+    qry = QSqlQuery(m_db);
+    bool ret = qry.exec(sql);
+    qDebug() << sql;
+    return ret;
+}
+
+bool ODBCDao::execute(QString sql)
+{
+    QSqlQuery qry(m_db);
+    bool ret = qry.exec(sql);
+    qDebug() << sql;
+    return ret;
+}
+
 ODBCDao* odbcdao()
 {
 
     return ODBCDao::instance().get();
+}
+
+QString dbName()
+{
+    return odbcdao()->dbname();
 }

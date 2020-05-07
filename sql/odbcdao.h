@@ -1,15 +1,17 @@
 #ifndef DMDAO_H
 #define DMDAO_H
 
+#include "abstractdao.h"
 #include <QApplication>
 #include <QDebug>
 #include <QObject>
 #include <QSettings>
 #include <QSqlError>
+#include <QSqlQuery>
 #include <memory>
 #include <qsqldatabase.h>
 using namespace std;
-class ODBCDao : public QObject {
+class ODBCDao : public AbstractDao {
     Q_OBJECT
 public:
     ~ODBCDao();
@@ -19,6 +21,10 @@ public:
     QString dbtype() const;
     void setDbtype(const QString& dbtype);
 
+    QString dbname() const;
+    void setDbname(const QString& dbname);
+    bool select(QString sql, QSqlQuery& qry);
+    bool execute(QString sql);
 signals:
 private:
     static shared_ptr<ODBCDao> m_dmdao;
@@ -32,5 +38,5 @@ private:
     QString m_dbtype;
 };
 ODBCDao* odbcdao();
-
+QString dbName();
 #endif // DMDAO_H

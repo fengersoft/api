@@ -8,6 +8,7 @@ class GlobalData : public QObject {
 public:
     explicit GlobalData(QObject* parent = nullptr);
     static QString qssText;
+    static QString areacode;
 signals:
 };
 

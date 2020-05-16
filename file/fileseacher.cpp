@@ -29,3 +29,13 @@ void FileSeacher::searchDir(QString path)
         }
     }
 }
+
+int FileSeacher::pid() const
+{
+    return m_pid;
+}
+
+void FileSeacher::setPid(int pid)
+{
+    m_pid = pid;
+}

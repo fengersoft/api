@@ -11,7 +11,8 @@ public:
     static SqliteDao* instance();
     static void freeInstance();
     SqliteWrapper* sqliteWrapper() const;
-
+    bool transaction();
+    void commit();
 signals:
 
 private:

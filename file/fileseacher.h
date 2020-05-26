@@ -12,12 +12,18 @@ public:
 
     void startSearch(QString rootPath);
 
+    int pid() const;
+    void setPid(int pid);
+
 private:
     QString rootPath;
     void searchDir(QString path);
 signals:
     void findFileInfo(QString rootPath, QFileInfo& fileInfo);
 public slots:
+
+private:
+    int m_pid;
 };
 
 #endif // FILESEACHER_H

@@ -30,6 +30,16 @@ SqliteWrapper* SqliteDao::sqliteWrapper() const
     return m_sqliteWrapper;
 }
 
+bool SqliteDao::transaction()
+{
+    m_sqliteWrapper->getDataBase().transaction();
+}
+
+void SqliteDao::commit()
+{
+    m_sqliteWrapper->getDataBase().commit();
+}
+
 SqliteDao* sqliteDao()
 {
     return SqliteDao::instance();

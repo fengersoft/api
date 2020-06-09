@@ -25,10 +25,14 @@ bool DualTcpServer::startServer(QString ip, int port, int subPort)
 void DualTcpServer::writeLn(QString s)
 {
     s = s + "\n";
+    QString info = QString("共%1个客户端连接").arg(m_clients.count());
+    emit onWriteLn(nullptr, info);
     for (int i = 0; i < m_clients.count(); i++) {
         QTcpSocket* socket = m_clients[i];
         QByteArray ba = s.toLocal8Bit();
         socket->write(ba);
+        socket->flush();
+        emit onWriteLn(socket, s);
     }
 }
 
@@ -41,6 +45,7 @@ void DualTcpServer::onTcpServerNewConnection()
 void DualTcpServer::onSubTcpServerNewConnection()
 {
     QTcpSocket* socket = subTcpServer->nextPendingConnection();
+    connect(socket, &QTcpSocket::disconnected, this, &DualTcpServer::socketDisconnect);
     m_clients << socket;
 }
 
@@ -49,4 +54,12 @@ void DualTcpServer::onTcpServerReadyRead()
     QTcpSocket* socket = static_cast<QTcpSocket*>(sender());
     QString msg = QTextCodec::codecForName("gb2312")->toUnicode(socket->readAll()).simplified();
     emit onTcpServerExecute(msg);
+}
+
+void DualTcpServer::socketDisconnect()
+{
+    QTcpSocket* socket = static_cast<QTcpSocket*>(sender());
+    m_clients.removeOne(socket);
+    emit onWriteLn(nullptr, "客户端端口断开");
+    emit onWriteLn(nullptr, QString("共有%1个客户端").arg(m_clients.count()));
 }

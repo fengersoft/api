@@ -17,10 +17,12 @@ public:
     void writeLn(QString s);
 signals:
     void onTcpServerExecute(QString msg);
+    void onWriteLn(QTcpSocket* socket, QString s);
 public slots:
     void onTcpServerNewConnection();
     void onSubTcpServerNewConnection();
     void onTcpServerReadyRead();
+    void socketDisconnect();
 
 private:
     QString m_ip;

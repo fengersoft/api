@@ -9,6 +9,9 @@ public:
     explicit GlobalData(QObject* parent = nullptr);
     static QString qssText;
     static QString areacode;
+    static QString userName;
+    static QString password;
+    static QString rootUrl;
 signals:
 };
 

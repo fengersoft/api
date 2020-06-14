@@ -35,6 +35,25 @@ int SyncHttpObject::postJsonData(const QString& params, QByteArray& data, QByteA
     return code;
 }
 
+int SyncHttpObject::postData(const QString& params, QByteArray& data, QByteArray& ret)
+{
+    QNetworkAccessManager* manager = new QNetworkAccessManager();
+    QNetworkRequest requet;
+    qDebug() << m_baseUrl + params;
+    requet.setUrl(QUrl(m_baseUrl + params));
+    requet.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QNetworkReply* reply = manager->post(requet, data);
+    QEventLoop loop;
+    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+    ret = reply->readAll();
+    int code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    delete reply;
+    delete manager;
+    return code;
+}
+
 int SyncHttpObject::getJsonData(const QString& params, QByteArray& ret)
 {
     QNetworkAccessManager* manager = new QNetworkAccessManager();
@@ -69,4 +88,9 @@ int SyncHttpObject::getHtmlData(const QString& url, QByteArray& ret)
     delete reply;
     delete manager;
     return code;
+}
+
+void SyncHttpObject::setBaseUrl(QString baseUrl)
+{
+    m_baseUrl = baseUrl;
 }

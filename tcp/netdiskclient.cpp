@@ -1,6 +1,6 @@
 #include "netdiskclient.h"
 
-NetDiskClient::NetDiskClient(QObject* parent)
+NetDiskClient::NetDiskClient(QObject *parent)
     : QObject(parent)
 {
     m_socket = new QTcpSocket(this);
@@ -13,7 +13,7 @@ QString NetDiskClient::ip() const
     return m_ip;
 }
 
-void NetDiskClient::setIp(const QString& ip)
+void NetDiskClient::setIp(const QString &ip)
 {
     m_ip = ip;
 }
@@ -47,13 +47,18 @@ void NetDiskClient::setIsConnected(bool isConnected)
 
 void NetDiskClient::uploadFile(QString filename)
 {
+    qDebug() << filename;
     QCryptographicHash md5(QCryptographicHash::Md5);
     QFile file(filename);
     file.open(QIODevice::ReadOnly);
     QByteArray data = file.readAll();
     md5.addData(data);
     QString md5str = md5.result().toHex().toLower();
-    m_socket->connectToHost(m_ip, m_port);
+    if (!m_socket->isOpen())
+    {
+        m_socket->connectToHost(m_ip, m_port);
+    }
+
     QString cmd = "upload\n";
     QByteArray cmdData;
     cmdData.append(cmd);
@@ -61,9 +66,13 @@ void NetDiskClient::uploadFile(QString filename)
     m_socket->write(data);
 }
 
-void NetDiskClient::downloadFileByMd5(QString md5)
+void NetDiskClient::downloadFileByMd5(QString md5, QString fileName)
 {
-    m_socket->connectToHost(m_ip, m_port);
+    if (!m_socket->isOpen())
+    {
+        m_socket->connectToHost(m_ip, m_port);
+    }
+
     QString cmd = "download\n";
     QByteArray cmdData;
     cmdData.append(cmd);
@@ -72,10 +81,11 @@ void NetDiskClient::downloadFileByMd5(QString md5)
     cmdData.append(md5 + "\n");
     m_socket->write(cmdData);
     QByteArray data;
-    while (m_socket->waitForReadyRead(10)) {
+    while (m_socket->waitForReadyRead(10))
+    {
         data.append(m_socket->readAll());
     }
-    QFile file("d:/b.txt");
+    QFile file(fileName);
     file.open(QIODevice::WriteOnly);
     file.write(data);
     file.flush();

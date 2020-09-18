@@ -7,7 +7,8 @@
 #include <QStack>
 #include <QtDebug>
 
-class ColorTable : public QObject {
+class ColorTable : public QObject
+{
     Q_OBJECT
 public:
     QList<QColor>& colors();
@@ -19,6 +20,7 @@ public:
     static QStack<int> colorIndexes;
     static void addColorIndex(int i);
     static int lastIndex();
+    static QColor getRandomColor();
 
 private:
     explicit ColorTable(QObject* parent = nullptr);

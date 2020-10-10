@@ -29,6 +29,8 @@ public:
     void setSelected(int id);
     bool hasItemId(int id);
     void mousePressEvent(QMouseEvent* event);
+    void updateItemText(int id, QString& s);
+    void deleteItemById(int id);
 signals:
     void onSelected(SelectCardItem* item);
 protected:

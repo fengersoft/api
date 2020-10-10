@@ -74,6 +74,38 @@ void SelectCard::mousePressEvent(QMouseEvent* event)
 
 }
 
+void SelectCard::updateItemText(int id, QString& s)
+{
+    for (int i = 0; i < items.count(); i++)
+    {
+        SelectCardItem* item = items.at(i);
+        if (item->id == id)
+        {
+            item->caption = s;
+
+        }
+
+    }
+    update();
+}
+
+void SelectCard::deleteItemById(int id)
+{
+    for (int i = 0; i < items.count(); i++)
+    {
+        SelectCardItem* item = items.at(i);
+        if (item->id == id)
+        {
+            items.removeAt(i);
+            delete  item;
+            break;
+
+        }
+
+    }
+    update();
+}
+
 void SelectCard::paintEvent(QPaintEvent* event)
 {
     QPainter painter;

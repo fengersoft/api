@@ -9,7 +9,7 @@ QString secondToString(int i)
 {
     if (i < 60)
     {
-        return QString("00:00:%1").arg(i, 2);
+        return QString("00:00:%1").arg(i, 2, 10, QLatin1Char('0'));
     }
     else if (i < 3600)
     {

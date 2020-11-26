@@ -11,7 +11,8 @@ DualTcpServer::DualTcpServer(QObject* parent)
 
 bool DualTcpServer::startServer(QString ip, int port, int subPort)
 {
-    if (tcpServer->isListening()) {
+    if (tcpServer->isListening())
+    {
         return false;
     }
     m_ip = ip;
@@ -27,9 +28,26 @@ void DualTcpServer::writeLn(QString s)
     s = s + "\n";
     QString info = QString("共%1个客户端连接").arg(m_clients.count());
     emit onWriteLn(nullptr, info);
-    for (int i = 0; i < m_clients.count(); i++) {
+    for (int i = 0; i < m_clients.count(); i++)
+    {
         QTcpSocket* socket = m_clients[i];
         QByteArray ba = s.toLocal8Bit();
+        socket->write(ba);
+        socket->flush();
+        emit onWriteLn(socket, s);
+    }
+}
+
+void DualTcpServer::writeUtf16LeLn(QString s)
+{
+    s = s + "\n";
+    QString info = QString("共%1个客户端连接").arg(m_clients.count());
+    emit onWriteLn(nullptr, info);
+    for (int i = 0; i < m_clients.count(); i++)
+    {
+        QTcpSocket* socket = m_clients[i];
+        QTextCodec* code = QTextCodec::codecForName("UTF16-LE");
+        QByteArray ba = code->fromUnicode(s);
         socket->write(ba);
         socket->flush();
         emit onWriteLn(socket, s);

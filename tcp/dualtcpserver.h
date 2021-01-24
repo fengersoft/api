@@ -7,7 +7,8 @@
 #include <QTcpSocket>
 #include <QTextCodec>
 #include <QTimer>
-class DualTcpServer : public QObject {
+class DualTcpServer : public QObject
+{
     Q_OBJECT
 public:
     explicit DualTcpServer(QObject* parent = nullptr);
@@ -15,8 +16,9 @@ public:
     QTcpServer* tcpServer;
     QTcpServer* subTcpServer;
     void writeLn(QString s);
+    void writeUtf16LeLn(QString s);
 signals:
-    void onTcpServerExecute(QString msg);
+    void onTcpServerExecute(const QString& msg);
     void onWriteLn(QTcpSocket* socket, QString s);
 public slots:
     void onTcpServerNewConnection();

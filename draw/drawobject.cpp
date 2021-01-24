@@ -42,6 +42,22 @@ int DrawObject::pointsYDistance(QPoint& pt1, QPoint& pt2)
 
 }
 
+int DrawObject::distance(QPoint pt1, QPoint pt2)
+{
+
+    int n = sqrt((pt1.x() - pt2.x()) * (pt1.x() - pt2.x()) + (pt1.y() - pt2.y()) * (pt1.y() - pt2.y()));
+
+    return n;
+}
+
+double DrawObject::distanced(QPoint pt1, QPoint pt2)
+{
+    double n = sqrt((pt1.x() - pt2.x()) * (pt1.x() - pt2.x()) + (pt1.y() - pt2.y()) * (pt1.y() - pt2.y()));
+
+    return n;
+}
+
+
 void DrawObject::drawRect(QPainter& painter, QPoint& pt1, QPoint& pt2)
 {
     QPoint p1 = pt1;
@@ -98,6 +114,19 @@ void DrawObject::drawLine(QPainter& painter, int startX, int startY, QPoint pt1,
 
 }
 
+bool DrawObject::pointInLine(QPoint pt1, QPoint pt2, QPoint pt)
+{
+
+    if ((distance(pt1, pt) + distance(pt2, pt)) == distance(pt1, pt2))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 void DrawObject::drawStraightLine(QPainter& painter, QPoint& pt1, QPoint pt2)
 {
     int x = abs(pt1.x() - pt2.x());
@@ -132,15 +161,42 @@ QPoint DrawObject::getTwoPointsCenter(QPoint& pt1, QPoint pt2)
     return QPoint((pt1.x() + pt2.x()) / 2, (pt1.y() + pt2.y()) / 2);
 }
 
-int DrawObject::getTwoPointsDistance(QPoint& pt1, QPoint pt2)
-{
-    return sqrt((pt1.x() - pt2.x()) * (pt1.x() - pt2.x()) + (pt1.y() - pt2.y()) * (pt1.y() - pt2.y()));
-}
+
 
 bool DrawObject::rectContainsPoint(int startX, int startY, QRect& rc, QPoint& pt)
 {
     QRect newRc = QRect(rc.left() + startX, rc.top() + startY, rc.width(), rc.height());
     return newRc.contains(pt);
+}
+
+bool DrawObject::pointInLine(int startX, int startY, QPoint pt1, QPoint pt2, QPoint& pt)
+{
+    QPoint p1 = QPoint(pt1.x() + startX, pt1.y() + startY);
+    QPoint p2 = QPoint(pt2.x() + startX, pt2.y() + startY);
+    if (abs(distance(p1, pt) + distance(p2, pt) - distance(p1, p2)) <= 1)
+    {
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool DrawObject::pointInLined(int startX, int startY, QPoint pt1, QPoint pt2, QPoint& pt)
+{
+    QPoint p1 = QPoint(pt1.x() + startX, pt1.y() + startY);
+    QPoint p2 = QPoint(pt2.x() + startX, pt2.y() + startY);
+    if (abs(distanced(p1, pt) + distanced(p2, pt) - distanced(p1, p2)) <= 0.05)
+    {
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 int DrawObject::rectAreaSize(QRect& rect)
@@ -161,6 +217,21 @@ double DrawObject::radianToAngle(double d)
 double DrawObject::angleToRadian(double d)
 {
     return d * (3.141592653 / 180);
+}
+
+QRect DrawObject::getRect(QPoint pt1, QPoint pt2)
+{
+    return QRect(pt1.x(), pt1.y(), abs(pt1.x() - pt2.x()), abs(pt1.y() - pt2.y()));
+}
+
+double DrawObject::getLineRadian(QPoint pt1, QPoint pt2)
+{
+    return atan2(pt2.y() - pt1.y(), pt2.x() - pt1.x());
+}
+
+double DrawObject::getLineAngle(QPoint pt1, QPoint pt2)
+{
+    return atan2(pt2.y() - pt1.y(), pt2.x() - pt1.x()) * (180 / 3.141592653);
 }
 
 

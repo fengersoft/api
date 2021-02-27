@@ -4,10 +4,16 @@
 #include <QEventLoop>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
 #include <QTextCodec>
+#else
+#include <QtCore5Compat/QTextCodec>
+#endif
 #include <QWidget>
 
-class SyncHttpObject : public QObject {
+class SyncHttpObject : public QObject
+{
     Q_OBJECT
 public:
     explicit SyncHttpObject(QWidget* parent = nullptr);

@@ -63,9 +63,12 @@ int SyncHttp::getHtmlData(const QString& url, QByteArray& ret)
     QEventLoop loop;
     connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
-    ret = reply->readAll();
-    int code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 
+    int code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    if (code == 200)
+    {
+        ret = reply->readAll();
+    }
     delete reply;
     delete manager;
     return code;

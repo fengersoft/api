@@ -6,6 +6,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QFile>
+#include <QTimer>
 
 class WebImage : public QObject
 {

@@ -19,7 +19,9 @@ public:
     bool downloadFile(QString url, QString path);
     void setIpAndPort(const QString& ip, int port, QString protocol = "http");
     int postJsonData(const QString& params, QByteArray& data, QByteArray& ret);
+    int postJsonData2(const QString& url, QByteArray& data, QByteArray& ret);
     int getJsonData(const QString& params, QByteArray& ret);
+    int getJsonData(const QString& url, const QString& params, QByteArray& ret);
     int getHtmlData(const QString& url, QByteArray& ret);
 signals:
 

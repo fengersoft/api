@@ -3,7 +3,7 @@
 
 #include <QAction>
 #include <QClipboard>
-#include <QDesktopWidget>
+
 #include <QElapsedTimer>
 #include <QKeyEvent>
 #include <QMainWindow>
@@ -12,11 +12,14 @@
 #include <QPainter>
 #include <QtDebug>
 #include <math.h>
-namespace Ui {
+#include "../ocr/ocrapi.h"
+namespace Ui
+{
 class CaptureWindow;
 }
 
-class CaptureWindow : public QMainWindow {
+class CaptureWindow : public QMainWindow
+{
     Q_OBJECT
 
 public:
@@ -43,6 +46,7 @@ private:
     bool m_mousedownFlag;
     QRect m_selectRc;
     QRect m_pixRc;
+    tesseract::TessBaseAPI* api;
 };
 void startShootScreen(bool hideWindow = true);
 

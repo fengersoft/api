@@ -10,7 +10,7 @@ class FnCron : public QObject
 public:
     explicit FnCron(QObject* parent = nullptr);
     bool match(QString cronText, QDateTime datetime);
-    bool matchTimeValue(QString s, int v, int minValue, int MaxValue);
+    bool matchValue(QString s, int v, int minValue, int MaxValue);
     void getTwoValue(QString s, int& a, int& b, QString sp = "-");
 signals:
 

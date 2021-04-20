@@ -14,15 +14,15 @@ bool FnCron::match(QString cronText, QDateTime datetime)
         return ret;
     }
     QTime time = datetime.time();
-    if (matchTimeValue(cronStl[0], time.second(), 0, 59) == false)
+    if (matchValue(cronStl[0], time.second(), 0, 59) == false)
     {
         return ret;
     }
-    if (matchTimeValue(cronStl[1], time.minute(), 0, 59) == false)
+    if (matchValue(cronStl[1], time.minute(), 0, 59) == false)
     {
         return ret;
     }
-    if (matchTimeValue(cronStl[2], time.hour(), 0, 23) == false)
+    if (matchValue(cronStl[2], time.hour(), 0, 23) == false)
     {
         return ret;
     }
@@ -34,7 +34,7 @@ bool FnCron::match(QString cronText, QDateTime datetime)
     return ret;
 }
 
-bool FnCron::matchTimeValue(QString s, int v, int minValue, int MaxValue)
+bool FnCron::matchValue(QString s, int v, int minValue, int MaxValue)
 {
     if (s == "*")
     {

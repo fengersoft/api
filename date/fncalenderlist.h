@@ -5,21 +5,21 @@
 #include <QDate>
 #include <QPainter>
 #include <QDebug>
-
+#include "lunar.h"
 #include "fncalenderbase.h"
 namespace Ui
 {
-class FnCalender;
+class FnCalenderList;
 }
 
 
-class FnCalender : public QWidget
+class FnCalenderList : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit FnCalender(QWidget* parent = nullptr);
-    ~FnCalender();
+    explicit FnCalenderList(QWidget* parent = nullptr);
+    ~FnCalenderList();
     void initData();
 
     QDate date() const;
@@ -28,6 +28,15 @@ public:
     bool isShowLunar() const;
     void setIsShowLunar(bool isShowLunar);
 
+    int rowHeight() const;
+    void setRowHeight(int rowHeight);
+
+    int itemTop() const;
+    void setItemTop(int itemTop);
+
+    int days() const;
+    void setDays(int days);
+
 signals:
     void drawExtraInfo(QPainter& painter, FnCalenderData& data);
     void cellClick(FnCalenderData& data);
@@ -35,6 +44,8 @@ protected:
     void paintEvent(QPaintEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
     void mousePressEvent(QMouseEvent* event);
+    void mouseReleaseEvent(QMouseEvent* event);
+
 private slots:
     void on_btnPreMonth_clicked();
 
@@ -45,11 +56,16 @@ private slots:
     void on_cbbMonth_currentIndexChanged(int index);
 
 private:
-    Ui::FnCalender* ui;
+    Ui::FnCalenderList* ui;
     QDate m_date;
     bool m_hasInit;
     FnCalenderData m_dateDatas[42];
     bool m_isShowLunar;
+    int m_rowHeight;
+    int m_itemTop;
+    QPoint m_mousedownPoint;
+    bool m_mousedownFlag;
+    int m_days;
 };
 
 #endif // FNCALENDER_H

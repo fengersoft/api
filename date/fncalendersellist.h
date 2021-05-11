@@ -1,5 +1,5 @@
-#ifndef FNCALENDERLIST_H
-#define FNCALENDERLIST_H
+#ifndef FNCALENDERSELLIST_H
+#define FNCALENDERSELLIST_H
 
 #include <QWidget>
 #include <QDate>
@@ -9,17 +9,17 @@
 #include "fncalenderbase.h"
 namespace Ui
 {
-class FnCalenderList;
+class FnCalenderSelList;
 }
 
 
-class FnCalenderList : public QWidget
+class FnCalenderSelList : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit FnCalenderList(QWidget* parent = nullptr);
-    ~FnCalenderList();
+    explicit FnCalenderSelList(QWidget* parent = nullptr);
+    ~FnCalenderSelList();
     void initData();
 
     QDate date() const;
@@ -36,7 +36,8 @@ public:
 
     int days() const;
     void setDays(int days);
-
+    QList<FnCalenderData> m_dateDatas;
+    void addData(FnCalenderData& data);
 signals:
     void drawExtraInfo(QPainter& painter, FnCalenderData& data);
     void cellClick(FnCalenderData& data);
@@ -56,10 +57,10 @@ private slots:
     void on_cbbMonth_currentIndexChanged(int index);
 
 private:
-    Ui::FnCalenderList* ui;
+    Ui::FnCalenderSelList* ui;
     QDate m_date;
     bool m_hasInit;
-    FnCalenderData m_dateDatas[42];
+
     bool m_isShowLunar;
     int m_rowHeight;
     int m_itemTop;

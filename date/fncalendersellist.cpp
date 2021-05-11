@@ -1,68 +1,56 @@
-#include "fncalenderlist.h"
-#include "ui_fncalenderlist.h"
+#include "fncalendersellist.h"
+#include "ui_fncalendersellist.h"
 
-FnCalenderList::FnCalenderList(QWidget* parent) :
+FnCalenderSelList::FnCalenderSelList(QWidget* parent) :
     QWidget(parent),
-    ui(new Ui::FnCalenderList)
+    ui(new Ui::FnCalenderSelList)
 {
     ui->setupUi(this);
     setMouseTracking(true);
     initData();
     m_isShowLunar = true;
     m_rowHeight = 96;
-    m_itemTop = 48;
+    m_itemTop = 1;
     m_mousedownFlag = false;
 }
 
-FnCalenderList::~FnCalenderList()
+FnCalenderSelList::~FnCalenderSelList()
 {
     delete ui;
 }
 
-void FnCalenderList::initData()
+void FnCalenderSelList::initData()
 {
     m_hasInit = false;
     m_date = QDate::currentDate();
-    for (int i = 1900; i <= 2100; i++)
-    {
-        ui->cbbYear->addItem(QString("%1年").arg(i), i);
 
-    }
-    ui->cbbYear->setCurrentIndex(m_date.year() - 1900);
-    for (int i = 1; i <= 12; i++)
-    {
-        ui->cbbMonth->addItem(QString("%1月").arg(i), i);
-    }
-    ui->cbbMonth->setCurrentIndex(m_date.month() - 1);
     m_hasInit = true;
 
 
 }
 
-QDate FnCalenderList::date() const
+QDate FnCalenderSelList::date() const
 {
     return m_date;
 }
 
-void FnCalenderList::setDate(const QDate& date)
+void FnCalenderSelList::setDate(const QDate& date)
 {
     m_date = date;
 }
 
-void FnCalenderList::changeDate()
+void FnCalenderSelList::changeDate()
 {
     if (!m_hasInit)
     {
         return;
     }
     m_itemTop = 48;
-    int y = ui->cbbYear->currentData(Qt::UserRole).toInt();
-    int m = ui->cbbMonth->currentData(Qt::UserRole).toInt();
-    m_date = QDate::fromString(QString("%1-%2-1").arg(y).arg(m), "yyyy-M-d");
+
     update();
 }
 
-void FnCalenderList::paintEvent(QPaintEvent* event)
+void FnCalenderSelList::paintEvent(QPaintEvent* event)
 {
     QPoint pt = this->cursor().pos();
     pt = mapFromGlobal(pt);
@@ -78,15 +66,17 @@ void FnCalenderList::paintEvent(QPaintEvent* event)
     QDate firstDay = m_date.addDays(-m_date.day() + 1);
     int n = firstDay.dayOfWeek() - 1;
 
-    int days = m_date.daysInMonth();
+    int days = m_dateDatas.count();
     m_days = days;
     int k = 0;
-    for (int i = 1; i <= days; i++)
+    for (int i = 0; i < days; i++)
     {
+        FnCalenderData data = m_dateDatas.at(i);
         QDate selDate, curDate;
         curDate = QDate::currentDate();
-        selDate = QDate::fromString(QString("%1-%2-%3").arg(m_date.year()).arg(m_date.month()).arg(i), "yyyy-M-d");
-        int ww = selDate.dayOfWeek();
+        selDate = QDate::fromString(QString("%1-%2-%3").arg(data.year).arg(data.month).arg(data.day), "yyyy-M-d");
+        int w = selDate.dayOfWeek();
+
         QRect dayRc = QRect(0, (i - 1) * m_rowHeight + m_itemTop, width(), m_rowHeight);
         if (dayRc.contains(pt))
         {
@@ -117,22 +107,21 @@ void FnCalenderList::paintEvent(QPaintEvent* event)
             painter.setBrush(Qt::white);
         }
         int ly, lm, ld;
-        QString lunarDate =  GetLunarStringX(m_date.year(), m_date.month(), i, ly, lm, ld);
-        QString lunarDay = getLunarDay(m_date.year(), m_date.month(), i);
+        QString lunarDate =  GetLunarStringX(data.year, data.month, data.day, ly, lm, ld);
+        QString lunarDay = getLunarDay(data.year, data.month, data.day);
         QRect textRc = QRect(dayRc.left() + 24, dayRc.top() + 4, dayRc.width(), 24);
         painter.drawText(textRc, Qt::AlignLeft | Qt::AlignVCenter, selDate.toString("yyyy-MM-dd") +
-                         "      " + lunarDate + "        " + weekNames[ww - 1]);
+                         "      " + lunarDate + "        " + weekNames[w - 1]);
 
 
-        m_dateDatas[k].line = k;
-        m_dateDatas[k].rc = dayRc;
-        m_dateDatas[k].date = selDate;
-        m_dateDatas[k].year = m_date.year();
-        m_dateDatas[k].month = m_date.month();
-        m_dateDatas[k].day = i;
-        m_dateDatas[k].lunarDate = lunarDate;
-        m_dateDatas[k].lunarDay = lunarDay;
-        emit drawExtraInfo(painter, m_dateDatas[k]);
+        data.line = k;
+        data.rc = dayRc;
+        data.date = selDate;
+
+        data.lunarDate = lunarDate;
+        data.lunarDay = lunarDay;
+        emit drawExtraInfo(painter, data);
+        m_dateDatas.replace(i, data);
         painter.setPen(QColor(203, 203, 203));
         if (k == 0)
         {
@@ -147,7 +136,7 @@ void FnCalenderList::paintEvent(QPaintEvent* event)
     painter.end();
 }
 
-void FnCalenderList::mouseMoveEvent(QMouseEvent* event)
+void FnCalenderSelList::mouseMoveEvent(QMouseEvent* event)
 {
     QPoint pt = this->cursor().pos();
     pt = mapFromGlobal(pt);
@@ -156,9 +145,9 @@ void FnCalenderList::mouseMoveEvent(QMouseEvent* event)
         int y = pt.y() - m_mousedownPoint.y();
         m_itemTop += y;
         m_mousedownPoint = pt;
-        if (m_itemTop > 48)
+        if (m_itemTop > 1)
         {
-            m_itemTop = 48;
+            m_itemTop = 1;
         }
         if (m_itemTop < -(m_days * m_rowHeight - height() + 64))
         {
@@ -169,14 +158,14 @@ void FnCalenderList::mouseMoveEvent(QMouseEvent* event)
     update();
 }
 
-void FnCalenderList::mousePressEvent(QMouseEvent* event)
+void FnCalenderSelList::mousePressEvent(QMouseEvent* event)
 {
 
     QPoint pt = this->cursor().pos();
     pt = mapFromGlobal(pt);
     m_mousedownPoint = pt;
     m_mousedownFlag = true;
-    for (int i = 0; i < 42; i++)
+    for (int i = 0; i < m_dateDatas.count(); i++)
     {
         FnCalenderData data = m_dateDatas[i];
         if (data.rc.contains(pt))
@@ -187,89 +176,76 @@ void FnCalenderList::mousePressEvent(QMouseEvent* event)
     }
 }
 
-void FnCalenderList::mouseReleaseEvent(QMouseEvent* event)
+void FnCalenderSelList::mouseReleaseEvent(QMouseEvent* event)
 {
     m_mousedownFlag = false;
     update();
 
 }
 
-void FnCalenderList::on_btnPreMonth_clicked()
+void FnCalenderSelList::on_btnPreMonth_clicked()
 {
-    if (ui->cbbMonth->currentIndex() - 1 >= 0)
-    {
-        ui->cbbMonth->setCurrentIndex(ui->cbbMonth->currentIndex() - 1);
-    }
-    else
-    {
-        ui->cbbYear->setCurrentIndex(ui->cbbYear->currentIndex() - 1);
-        ui->cbbMonth->setCurrentIndex(11);
 
-    }
-    changeDate();
 }
 
-void FnCalenderList::on_btnNextMonth_clicked()
+void FnCalenderSelList::on_btnNextMonth_clicked()
 {
-    if (ui->cbbMonth->currentIndex() + 1 <= 11)
-    {
-        ui->cbbMonth->setCurrentIndex(ui->cbbMonth->currentIndex() + 1);
-    }
-    else
-    {
-        ui->cbbYear->setCurrentIndex(ui->cbbYear->currentIndex() + 1);
-        ui->cbbMonth->setCurrentIndex(0);
 
-    }
-    changeDate();
 }
 
-void FnCalenderList::on_cbbYear_currentIndexChanged(int index)
+void FnCalenderSelList::on_cbbYear_currentIndexChanged(int index)
 {
     changeDate();
 }
 
-void FnCalenderList::on_cbbMonth_currentIndexChanged(int index)
+void FnCalenderSelList::on_cbbMonth_currentIndexChanged(int index)
 {
     changeDate();
 }
 
-int FnCalenderList::days() const
+int FnCalenderSelList::days() const
 {
     return m_days;
 }
 
-void FnCalenderList::setDays(int days)
+void FnCalenderSelList::setDays(int days)
 {
     m_days = days;
 }
 
-int FnCalenderList::itemTop() const
+void FnCalenderSelList::addData(FnCalenderData& data)
+{
+    FnCalenderData newData = data;
+    m_dateDatas.append(newData);
+    // update();
+}
+
+int FnCalenderSelList::itemTop() const
 {
     return m_itemTop;
 }
 
-void FnCalenderList::setItemTop(int itemTop)
+void FnCalenderSelList::setItemTop(int itemTop)
 {
     m_itemTop = itemTop;
 }
 
-int FnCalenderList::rowHeight() const
+int FnCalenderSelList::rowHeight() const
 {
     return m_rowHeight;
 }
 
-void FnCalenderList::setRowHeight(int rowHeight)
+void FnCalenderSelList::setRowHeight(int rowHeight)
 {
     m_rowHeight = rowHeight;
 }
 
-bool FnCalenderList::isShowLunar() const
+bool FnCalenderSelList::isShowLunar() const
 {
     return m_isShowLunar;
 }
 
-void FnCalenderList::setIsShowLunar(bool isShowLunar)
+void FnCalenderSelList::setIsShowLunar(bool isShowLunar)
 {
     m_isShowLunar = isShowLunar;
 }

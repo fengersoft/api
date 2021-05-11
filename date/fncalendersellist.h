@@ -38,6 +38,7 @@ public:
     void setDays(int days);
     QList<FnCalenderData> m_dateDatas;
     void addData(FnCalenderData& data);
+    void clearData();
 signals:
     void drawExtraInfo(QPainter& painter, FnCalenderData& data);
     void cellClick(FnCalenderData& data);
@@ -48,13 +49,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event);
 
 private slots:
-    void on_btnPreMonth_clicked();
 
-    void on_btnNextMonth_clicked();
-
-    void on_cbbYear_currentIndexChanged(int index);
-
-    void on_cbbMonth_currentIndexChanged(int index);
 
 private:
     Ui::FnCalenderSelList* ui;

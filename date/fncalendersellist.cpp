@@ -52,6 +52,7 @@ void FnCalenderSelList::changeDate()
 
 void FnCalenderSelList::paintEvent(QPaintEvent* event)
 {
+    Q_UNUSED(event);
     QPoint pt = this->cursor().pos();
     pt = mapFromGlobal(pt);
     QPainter painter;
@@ -60,11 +61,10 @@ void FnCalenderSelList::paintEvent(QPaintEvent* event)
     painter.setBrush(Qt::white);
     painter.drawRect(rect());
     QString weekNames[] = {"星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"};
-    int w = width() / 7;
-    int h = (height() - 96) / 6;
 
-    QDate firstDay = m_date.addDays(-m_date.day() + 1);
-    int n = firstDay.dayOfWeek() - 1;
+
+
+
 
     int days = m_dateDatas.count();
     m_days = days;
@@ -138,6 +138,7 @@ void FnCalenderSelList::paintEvent(QPaintEvent* event)
 
 void FnCalenderSelList::mouseMoveEvent(QMouseEvent* event)
 {
+    Q_UNUSED(event);
     QPoint pt = this->cursor().pos();
     pt = mapFromGlobal(pt);
     if (m_mousedownFlag)
@@ -161,6 +162,7 @@ void FnCalenderSelList::mouseMoveEvent(QMouseEvent* event)
 void FnCalenderSelList::mousePressEvent(QMouseEvent* event)
 {
 
+    Q_UNUSED(event);
     QPoint pt = this->cursor().pos();
     pt = mapFromGlobal(pt);
     m_mousedownPoint = pt;
@@ -178,30 +180,17 @@ void FnCalenderSelList::mousePressEvent(QMouseEvent* event)
 
 void FnCalenderSelList::mouseReleaseEvent(QMouseEvent* event)
 {
+    Q_UNUSED(event);
     m_mousedownFlag = false;
     update();
 
 }
 
-void FnCalenderSelList::on_btnPreMonth_clicked()
-{
 
-}
 
-void FnCalenderSelList::on_btnNextMonth_clicked()
-{
 
-}
 
-void FnCalenderSelList::on_cbbYear_currentIndexChanged(int index)
-{
-    changeDate();
-}
 
-void FnCalenderSelList::on_cbbMonth_currentIndexChanged(int index)
-{
-    changeDate();
-}
 
 int FnCalenderSelList::days() const
 {
@@ -217,7 +206,13 @@ void FnCalenderSelList::addData(FnCalenderData& data)
 {
     FnCalenderData newData = data;
     m_dateDatas.append(newData);
-    // update();
+    update();
+}
+
+void FnCalenderSelList::clearData()
+{
+    m_dateDatas.clear();
+    update();
 }
 
 int FnCalenderSelList::itemTop() const

@@ -27,6 +27,7 @@ void SqliteWrapper::open()
     database = QSqlDatabase::addDatabase("QSQLITE", dbName);
     database.setDatabaseName(fileName);
     opened = database.open();
+    qDebug() << opened;
 }
 
 void SqliteWrapper::close()
@@ -44,9 +45,11 @@ void SqliteWrapper::select(QString sql, QStandardItemModel* model)
 {
     model->removeRows(0, model->rowCount());
     QSqlQuery qry(sql, database);
-    while (qry.next()) {
+    while (qry.next())
+    {
         QList<QStandardItem*> items;
-        for (int i = 0; i < qry.record().count(); i++) {
+        for (int i = 0; i < qry.record().count(); i++)
+        {
             QStandardItem* item = new QStandardItem();
             item->setText(qry.value(i).toString());
             items.append(item);
@@ -58,24 +61,32 @@ void SqliteWrapper::select(QString sql, QStandardItemModel* model)
 void SqliteWrapper::select(QString sql, QSqlQuery& qry)
 {
     qry = QSqlQuery(database);
-    qry.exec(sql);
+    bool ret = qry.exec(sql);
+    if (!ret)
+    {
+        qDebug() << sql;
+        qDebug() << qry.lastError().text();
+    }
 }
 
 void SqliteWrapper::selectToTreeView(QString sql, int pid, QStandardItemModel* model)
 {
     QSqlQuery qry(database);
     bool ret = qry.exec(sql);
-    if (!ret) {
+    if (!ret)
+    {
         qDebug() << sql;
         return;
     }
     QList<TreeviewData> items;
-    while (qry.next()) {
+    while (qry.next())
+    {
         TreeviewData data;
         data.pid = qry.value(0).toInt();
         data.id = qry.value(1).toInt();
         data.text = qry.value(2).toString();
-        for (int i = 0; i < qry.record().count(); i++) {
+        for (int i = 0; i < qry.record().count(); i++)
+        {
             data.values << qry.value(i).toString();
         }
         items << data;
@@ -86,17 +97,23 @@ void SqliteWrapper::selectToTreeView(QString sql, int pid, QStandardItemModel* m
 
 void SqliteWrapper::loadItemData(int pid, QStandardItemModel* model, QStandardItem* parentItem, QList<TreeviewData>& items)
 {
-    for (int i = 0; i < items.count(); i++) {
+    for (int i = 0; i < items.count(); i++)
+    {
         TreeviewData data = items.at(i);
-        if (pid == data.pid) {
+        if (pid == data.pid)
+        {
             QStandardItem* item = new QStandardItem();
             item->setText(data.text);
-            for (int j = 0; j < data.values.count(); j++) {
+            for (int j = 0; j < data.values.count(); j++)
+            {
                 item->setData(data.values[j], Qt::UserRole + j + 1);
             }
-            if (parentItem == nullptr) {
+            if (parentItem == nullptr)
+            {
                 model->appendRow(item);
-            } else {
+            }
+            else
+            {
                 parentItem->appendRow(item);
             }
             loadItemData(data.id, model, item, items);
@@ -109,12 +126,16 @@ int SqliteWrapper::findId(QString tableName, QString fieldName, QString fieldVal
     QString sql = QString("select id from %1 where %2='%3'").arg(tableName).arg(fieldName).arg(fieldValue);
     QSqlQuery qry(database);
     bool ret = qry.exec(sql);
-    if (!ret) {
+    if (!ret)
+    {
         qDebug() << sql;
     }
-    if (qry.next()) {
+    if (qry.next())
+    {
         return qry.value(0).toInt();
-    } else {
+    }
+    else
+    {
         return -1;
     }
 }
@@ -124,7 +145,8 @@ bool SqliteWrapper::execute(QString sql)
     QSqlQuery qry(database);
     bool ret = qry.exec(sql);
 
-    if (!ret) {
+    if (!ret)
+    {
         qDebug() << sql;
         qDebug() << qry.lastError().text();
     }
@@ -133,7 +155,8 @@ bool SqliteWrapper::execute(QString sql)
 
 void SqliteWrapper::truncateTables(QStringList& tables)
 {
-    for (int i = 0; i < tables.count(); i++) {
+    for (int i = 0; i < tables.count(); i++)
+    {
         QString sql = "delete from " + tables[i];
         execute(sql);
         sql = "DELETE FROM sqlite_sequence WHERE name = '" + tables[i] + "'";
@@ -151,7 +174,8 @@ int SqliteWrapper::getMaxId(QString tableName)
     QString sql = "select max(id) from " + tableName;
     QSqlQuery qry;
     select(sql, qry);
-    if (qry.next()) {
+    if (qry.next())
+    {
         return qry.value(0).toInt();
     }
     return 0;

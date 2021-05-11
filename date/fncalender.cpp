@@ -8,6 +8,7 @@ FnCalender::FnCalender(QWidget* parent) :
     ui->setupUi(this);
     setMouseTracking(true);
     initData();
+    m_isShowLunar = true;
 }
 
 FnCalender::~FnCalender()
@@ -72,6 +73,20 @@ void FnCalender::paintEvent(QPaintEvent* event)
     painter.setPen(Qt::black);
     for (int i = 0; i < 7; i++)
     {
+        painter.setPen(QColor(197, 197, 197));
+        painter.drawLine(i * w, 48, i * w, height());
+    }
+
+    painter.setPen(QColor(197, 197, 197));
+    painter.drawLine(0, 48, width(), 48);
+    for (int i = 0; i < 6; i++)
+    {
+        painter.setPen(QColor(197, 197, 197));
+        painter.drawLine(0, i * h + 96, width(), i * h + 96);
+    }
+    painter.setPen(Qt::black);
+    for (int i = 0; i < 7; i++)
+    {
         QRect weekNameRc = QRect(i * w, 48, w, 48);
         painter.drawText(weekNameRc, Qt::AlignCenter, weekNames[i]);
     }
@@ -91,6 +106,9 @@ void FnCalender::paintEvent(QPaintEvent* event)
     }
     for (int i = 1; i <= days; i++)
     {
+        QDate selDate, curDate;
+        curDate = QDate::currentDate();
+        selDate = QDate::fromString(QString("%1-%2-%3").arg(m_date.year()).arg(m_date.month()).arg(i), "yyyy-M-d");
         QRect dayRc = QRect(n * w, j * h + 96, w, h);
         if (dayRc.contains(pt))
         {
@@ -98,18 +116,44 @@ void FnCalender::paintEvent(QPaintEvent* event)
 
             painter.setPen(Qt::NoPen);
             painter.drawRect(dayRc);
-            painter.setPen(Qt::black);
+            if (selDate == curDate)
+            {
+                painter.setPen(Qt::red);
+            }
+            else
+            {
+                painter.setPen(Qt::black);
+            }
+
         }
         else
         {
-            painter.setPen(Qt::black);
+            if (selDate == curDate)
+            {
+                painter.setPen(Qt::red);
+            }
+            else
+            {
+                painter.setPen(Qt::black);
+            }
             painter.setBrush(Qt::white);
         }
+        int ly, lm, ld;
+        QString lunarDate =  GetLunarStringX(m_date.year(), m_date.month(), i, ly, lm, ld);
+        QString lunarDay = getLunarDay(m_date.year(), m_date.month(), i);
         QRect textRc = QRect(dayRc.left(), dayRc.top() + 4, dayRc.width(), 24);
         painter.drawText(textRc, Qt::AlignCenter, QString("%1").arg(i));
+        QRect lunarTextRc = QRect(dayRc.left(), dayRc.top() + 28, dayRc.width(), 24);
+        painter.drawText(lunarTextRc, Qt::AlignCenter, lunarDay);
+
         m_dateDatas[k].line = j;
         m_dateDatas[k].rc = dayRc;
-        m_dateDatas[k].date = QDate::fromString(QString("%1-%2-%3").arg(m_date.year()).arg(m_date.month()).arg(i), "yyyy-M-d");
+        m_dateDatas[k].date = selDate;
+        m_dateDatas[k].year = m_date.year();
+        m_dateDatas[k].month = m_date.month();
+        m_dateDatas[k].day = i;
+        m_dateDatas[k].lunarDate = lunarDate;
+        m_dateDatas[k].lunarDay = lunarDay;
         n++;
         if (n == 7)
         {
@@ -143,6 +187,21 @@ void FnCalender::paintEvent(QPaintEvent* event)
 void FnCalender::mouseMoveEvent(QMouseEvent* event)
 {
     update();
+}
+
+void FnCalender::mousePressEvent(QMouseEvent* event)
+{
+    QPoint pt = this->cursor().pos();
+    pt = mapFromGlobal(pt);
+    for (int i = 0; i < 42; i++)
+    {
+        FnCalenderData data = m_dateDatas[i];
+        if (data.rc.contains(pt))
+        {
+            emit cellClick(data);
+        }
+
+    }
 }
 
 void FnCalender::on_btnPreMonth_clicked()
@@ -183,4 +242,14 @@ void FnCalender::on_cbbYear_currentIndexChanged(int index)
 void FnCalender::on_cbbMonth_currentIndexChanged(int index)
 {
     changeDate();
+}
+
+bool FnCalender::isShowLunar() const
+{
+    return m_isShowLunar;
+}
+
+void FnCalender::setIsShowLunar(bool isShowLunar)
+{
+    m_isShowLunar = isShowLunar;
 }

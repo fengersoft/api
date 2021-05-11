@@ -4,8 +4,12 @@
 #include "sqlitewrapper.h"
 #include <QApplication>
 #include <QObject>
+#include <QFileInfo>
+#include <QStandardPaths>
+#include <QDebug>
 
-class SqliteDao : public QObject {
+class SqliteDao : public QObject
+{
     Q_OBJECT
 public:
     static SqliteDao* instance();

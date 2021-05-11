@@ -5,6 +5,7 @@
 #include <QDate>
 #include <QPainter>
 #include <QDebug>
+#include "lunar.h"
 namespace Ui
 {
 class FnCalender;
@@ -12,8 +13,13 @@ class FnCalender;
 struct FnCalenderData
 {
     int line;
+    int year;
+    int month;
+    int day;
     QRect rc;
     QDate date;
+    QString lunarDate;
+    QString lunarDay;
     bool isNull = false;
 };
 
@@ -29,11 +35,16 @@ public:
     QDate date() const;
     void setDate(const QDate& date);
     void changeDate();
+    bool isShowLunar() const;
+    void setIsShowLunar(bool isShowLunar);
+
 signals:
     void drawExtraInfo(QPainter& painter, FnCalenderData& data);
+    void cellClick(FnCalenderData& data);
 protected:
     void paintEvent(QPaintEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
+    void mousePressEvent(QMouseEvent* event);
 private slots:
     void on_btnPreMonth_clicked();
 
@@ -48,6 +59,7 @@ private:
     QDate m_date;
     bool m_hasInit;
     FnCalenderData m_dateDatas[42];
+    bool m_isShowLunar;
 };
 
 #endif // FNCALENDER_H

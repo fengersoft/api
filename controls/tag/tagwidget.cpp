@@ -8,6 +8,7 @@ TagWidget::TagWidget(QWidget* parent) :
     ui->setupUi(this);
     m_itemsLeft = 0;
     m_mousedownFlag = false;
+    m_currentSelectedIndex = -1;
 }
 
 TagWidget::~TagWidget()
@@ -30,6 +31,7 @@ void TagWidget::addTag(int id, QString caption)
 
 void TagWidget::paintEvent(QPaintEvent* event)
 {
+    Q_UNUSED(event);
     QPainter painter;
     painter.begin(this);
     int l = m_itemsLeft;
@@ -38,11 +40,13 @@ void TagWidget::paintEvent(QPaintEvent* event)
     {
         TagWidgetItem* item = items.at(i);
         QFont font = painter.font();
+        font.setFamily("宋体");
         font.setPointSize(item->selected() ? 13 : 11);
         font.setBold(item->selected());
         painter.setFont(font);
         QFontMetrics fm = painter.fontMetrics();
-        int w = fm.width(item->caption() + 24);
+        int w = fm.boundingRect(item->caption()).width() + 24;
+
         item->rect = QRect(l, 0, w, height());
         painter.drawText(item->rect, Qt::AlignCenter, item->caption());
 
@@ -108,6 +112,7 @@ void TagWidget::mouseReleaseEvent(QMouseEvent* event)
             if (item->rect.contains(pt))
             {
                 item->setSelected(true);
+                m_currentSelectedIndex = item->index();
                 emit onItemSelected(item);
             }
             else
@@ -120,6 +125,14 @@ void TagWidget::mouseReleaseEvent(QMouseEvent* event)
 
     update();
 }
+
+int TagWidget::currentSelectedIndex() const
+{
+    return m_currentSelectedIndex;
+}
+
+
+
 
 int TagWidget::itemsLeft() const
 {
@@ -138,6 +151,7 @@ void TagWidget::setSelectedByIndex(int index)
         TagWidgetItem* item = items.at(i);
         if (item->index() == index)
         {
+            m_currentSelectedIndex = index;
             item->setSelected(true);
             emit onItemSelected(item);
         }
@@ -148,4 +162,10 @@ void TagWidget::setSelectedByIndex(int index)
 
     }
     update();
+}
+
+void TagWidget::clearItems()
+{
+    qDeleteAll(items);
+    items.clear();
 }

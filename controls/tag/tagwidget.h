@@ -22,6 +22,11 @@ public:
     int itemsLeft() const;
     void setItemsLeft(int itemsLeft);
     void setSelectedByIndex(int index);
+    void clearItems();
+
+
+    int currentSelectedIndex() const;
+
 signals:
     void onItemSelected(TagWidgetItem* item);
 protected:
@@ -36,6 +41,7 @@ private:
     QPoint m_mouseclickPoint;
     bool m_mousedownFlag;
     int m_itemsWidth;
+    int m_currentSelectedIndex;
 };
 
 #endif // TAGWIDGET_H

@@ -77,7 +77,7 @@ int SyncHttpObject::getHtmlData(const QString& url, QByteArray& ret)
     QNetworkAccessManager* manager = new QNetworkAccessManager();
     QNetworkRequest requet;
     requet.setUrl(QUrl(url));
-
+    qDebug() << url;
     QNetworkReply* reply = manager->get(requet);
     QEventLoop loop;
     connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);

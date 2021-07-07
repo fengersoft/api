@@ -25,6 +25,8 @@ QString readString(QString filePath)
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QByteArray data = file.readAll();
     QString s = readString(data);
+    QStringList stl = s.split("\n");
+    qDebug() << stl;
     file.close();
     return s;
 }

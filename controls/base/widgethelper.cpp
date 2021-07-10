@@ -14,6 +14,7 @@ bool WidgetHelper::mousedownFlag() const
 void WidgetHelper::setMousedownFlag(bool mousedownFlag)
 {
     m_mousedownFlag = mousedownFlag;
+    m_control->update();
 }
 
 QPoint WidgetHelper::mousedownPoint() const

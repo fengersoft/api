@@ -26,6 +26,9 @@ public:
     bool isShow() const;
     void setIsShow(bool isShow);
 
+    int pointNumber() const;
+    void setPointNumber(int pointNumber);
+
 signals:
 
 private:
@@ -33,6 +36,7 @@ private:
     QString m_caption;
     bool m_isShow;
     QRect m_colorRect;
+    int m_pointNumber;
 
 };
 

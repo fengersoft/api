@@ -46,3 +46,13 @@ void FnChartValues::setIsShow(bool isShow)
 {
     m_isShow = isShow;
 }
+
+int FnChartValues::pointNumber() const
+{
+    return m_pointNumber;
+}
+
+void FnChartValues::setPointNumber(int pointNumber)
+{
+    m_pointNumber = pointNumber;
+}

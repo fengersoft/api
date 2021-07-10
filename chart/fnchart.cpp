@@ -130,6 +130,7 @@ void FnChart::paintEvent(QPaintEvent* event)
                 prePt = pt;
             }
         }
+        painter.restore();
     }
     int t = 16;
     int l = width() - 200;
@@ -171,7 +172,9 @@ void FnChart::mouseMoveEvent(QMouseEvent* event)
     {
         QPoint pt = m_helper->cursorPos();
         int x = pt.x() - m_helper->mousedownPoint().x();
+        int y = pt.y() - m_helper->mousedownPoint().y();
         m_startX += x;
+        m_startY += y;
         m_helper->setMousedownPoint(pt);
         update();
 

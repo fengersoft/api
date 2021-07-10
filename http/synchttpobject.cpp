@@ -94,3 +94,12 @@ void SyncHttpObject::setBaseUrl(QString baseUrl)
 {
     m_baseUrl = baseUrl;
 }
+
+int getHtmlData(QWidget* parent, const QString& url, QByteArray& ret)
+{
+    SyncHttpObject* http = new SyncHttpObject(parent);
+    int code = http->getHtmlData(url, ret);
+
+    delete http;
+    return code;
+}

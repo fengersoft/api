@@ -1,11 +1,11 @@
 #include "netdiskclient.h"
 
-NetDiskClient::NetDiskClient(QObject *parent)
+NetDiskClient::NetDiskClient(QObject* parent)
     : QObject(parent)
 {
     m_socket = new QTcpSocket(this);
     m_ip = "127.0.0.1";
-    m_port = 9002;
+    m_port = 9001;
 }
 
 QString NetDiskClient::ip() const
@@ -13,7 +13,7 @@ QString NetDiskClient::ip() const
     return m_ip;
 }
 
-void NetDiskClient::setIp(const QString &ip)
+void NetDiskClient::setIp(const QString& ip)
 {
     m_ip = ip;
 }
@@ -54,6 +54,25 @@ void NetDiskClient::uploadFile(QString filename)
     QByteArray data = file.readAll();
     md5.addData(data);
     QString md5str = md5.result().toHex().toLower();
+    if (!m_socket->isOpen())
+    {
+        m_socket->connectToHost(m_ip, m_port);
+    }
+
+    QString cmd = "upload\n";
+    QByteArray cmdData;
+    cmdData.append(cmd);
+    m_socket->write(cmdData);
+    m_socket->write(data);
+}
+
+void NetDiskClient::uploadFile(QString filename, QString md5)
+{
+    qDebug() << filename;
+
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly);
+    QByteArray data = file.readAll();
     if (!m_socket->isOpen())
     {
         m_socket->connectToHost(m_ip, m_port);

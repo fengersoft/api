@@ -97,6 +97,7 @@ void SyncHttpObject::setBaseUrl(QString baseUrl)
 
 int getHtmlData(QWidget* parent, const QString& url, QByteArray& ret)
 {
+    qDebug() << url;
     SyncHttpObject* http = new SyncHttpObject(parent);
     int code = http->getHtmlData(url, ret);
 

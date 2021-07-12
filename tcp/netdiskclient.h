@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QNetworkConfigurationManager>
+#include <QApplication>
 
 class NetDiskClient : public QObject
 {

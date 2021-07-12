@@ -64,6 +64,10 @@ void NetDiskClient::uploadFile(QString filename)
     cmdData.append(cmd);
     m_socket->write(cmdData);
     m_socket->write(data);
+    while (m_socket->waitForBytesWritten())
+    {
+        QApplication::processEvents();
+    }
 }
 
 void NetDiskClient::uploadFile(QString filename, QString md5)

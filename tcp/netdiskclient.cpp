@@ -63,11 +63,18 @@ void NetDiskClient::uploadFile(QString filename)
     QByteArray cmdData;
     cmdData.append(cmd);
     m_socket->write(cmdData);
-    m_socket->write(data);
+    int sendSize = m_socket->write(data);
+    qDebug() << data.size();
+    qDebug() << sendSize;
+
     while (m_socket->waitForBytesWritten())
     {
         QApplication::processEvents();
     }
+    m_socket->flush();
+    m_socket->disconnectFromHost();
+    m_socket->close();
+
 }
 
 void NetDiskClient::uploadFile(QString filename, QString md5)
@@ -86,7 +93,17 @@ void NetDiskClient::uploadFile(QString filename, QString md5)
     QByteArray cmdData;
     cmdData.append(cmd);
     m_socket->write(cmdData);
-    m_socket->write(data);
+    int sendSize = m_socket->write(data);
+    qDebug() << data.size();
+    qDebug() << sendSize;
+
+    while (m_socket->waitForBytesWritten())
+    {
+        QApplication::processEvents();
+    }
+    m_socket->flush();
+    m_socket->disconnectFromHost();
+    m_socket->close();
 }
 
 void NetDiskClient::downloadFileByMd5(QString md5, QString fileName)
@@ -104,13 +121,17 @@ void NetDiskClient::downloadFileByMd5(QString md5, QString fileName)
     cmdData.append(md5 + "\n");
     m_socket->write(cmdData);
     QByteArray data;
-    while (m_socket->waitForReadyRead(10))
+    while (m_socket->waitForReadyRead(3000))
     {
         data.append(m_socket->readAll());
+        qDebug() << "readdata";
     }
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
     file.write(data);
     file.flush();
     file.close();
+    m_socket->disconnectFromHost();
+    m_socket->close();
+
 }

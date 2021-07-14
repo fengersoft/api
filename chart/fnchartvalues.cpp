@@ -56,3 +56,20 @@ void FnChartValues::setPointNumber(int pointNumber)
 {
     m_pointNumber = pointNumber;
 }
+
+FnChartYValue* FnChartValues::getValueByCaption(QString caption)
+{
+    FnChartYValue* ret = nullptr;
+    for (int i = 0; i < values.count(); i++)
+    {
+        FnChartYValue* value = values.at(i);
+        if (value->caption() == caption)
+        {
+            ret = value;
+            break;
+        }
+    }
+
+    return ret;
+
+}

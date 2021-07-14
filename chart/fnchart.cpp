@@ -105,13 +105,21 @@ void FnChart::paintEvent(QPaintEvent* event)
         pen.setColor(dataValues->color());
         pen.setWidth(2);
         painter.setPen(pen);
-        for (int j = 0; j < dataValues->values.count(); j++)
+        for (int j = 0; j < m_xlabels.count(); j++)
         {
-            FnChartYValue* value = dataValues->values.at(j);
-            int y = m_startY - value->value() * 10;
-            value->setY(y);
-            int x = labelMap[value->caption()];
-            value->setX(x);
+            QString caption = m_xlabels.at(j)->caption();
+            FnChartYValue* value = dataValues->getValueByCaption(caption);
+            double v = value == nullptr ? 0 : value->value();
+            int y = m_startY - v * 10;
+
+            int x = labelMap[caption];
+            if (value != nullptr)
+            {
+                value->setY(y);
+                value->setX(x);
+
+            }
+
             if (j == 0)
             {
                 prePt = QPoint(x, y);
@@ -150,6 +158,11 @@ void FnChart::paintEvent(QPaintEvent* event)
         t += 36;
 
     }
+    QPen pen = painter.pen();
+    pen.setColor(QColor(197, 197, 197));
+    pen.setStyle(Qt::DotLine);
+    painter.setPen(pen);
+    painter.drawLine(0, m_startY, width(), m_startY);
     painter.end();
 }
 

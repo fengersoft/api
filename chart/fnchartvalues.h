@@ -28,6 +28,7 @@ public:
 
     int pointNumber() const;
     void setPointNumber(int pointNumber);
+    FnChartYValue* getValueByCaption(QString caption);
 
 signals:
 

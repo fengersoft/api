@@ -1,11 +1,11 @@
 #include "netdiskclient.h"
 
-NetDiskClient::NetDiskClient(QObject *parent)
+NetDiskClient::NetDiskClient(QObject* parent)
     : QObject(parent)
 {
     m_socket = new QTcpSocket(this);
     m_ip = "127.0.0.1";
-    m_port = 9002;
+    m_port = 9001;
 }
 
 QString NetDiskClient::ip() const
@@ -13,7 +13,7 @@ QString NetDiskClient::ip() const
     return m_ip;
 }
 
-void NetDiskClient::setIp(const QString &ip)
+void NetDiskClient::setIp(const QString& ip)
 {
     m_ip = ip;
 }
@@ -63,7 +63,47 @@ void NetDiskClient::uploadFile(QString filename)
     QByteArray cmdData;
     cmdData.append(cmd);
     m_socket->write(cmdData);
-    m_socket->write(data);
+    int sendSize = m_socket->write(data);
+    qDebug() << data.size();
+    qDebug() << sendSize;
+
+    while (m_socket->waitForBytesWritten())
+    {
+        QApplication::processEvents();
+    }
+    m_socket->flush();
+    m_socket->disconnectFromHost();
+    m_socket->close();
+
+}
+
+void NetDiskClient::uploadFile(QString filename, QString md5)
+{
+    qDebug() << filename;
+
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly);
+    QByteArray data = file.readAll();
+    if (!m_socket->isOpen())
+    {
+        m_socket->connectToHost(m_ip, m_port);
+    }
+
+    QString cmd = "upload\n";
+    QByteArray cmdData;
+    cmdData.append(cmd);
+    m_socket->write(cmdData);
+    int sendSize = m_socket->write(data);
+    qDebug() << data.size();
+    qDebug() << sendSize;
+
+    while (m_socket->waitForBytesWritten())
+    {
+        QApplication::processEvents();
+    }
+    m_socket->flush();
+    m_socket->disconnectFromHost();
+    m_socket->close();
 }
 
 void NetDiskClient::downloadFileByMd5(QString md5, QString fileName)
@@ -81,13 +121,17 @@ void NetDiskClient::downloadFileByMd5(QString md5, QString fileName)
     cmdData.append(md5 + "\n");
     m_socket->write(cmdData);
     QByteArray data;
-    while (m_socket->waitForReadyRead(10))
+    while (m_socket->waitForReadyRead(3000))
     {
         data.append(m_socket->readAll());
+        qDebug() << "readdata";
     }
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
     file.write(data);
     file.flush();
     file.close();
+    m_socket->disconnectFromHost();
+    m_socket->close();
+
 }

@@ -29,5 +29,5 @@ signals:
 private:
     QString m_baseUrl;
 };
-
+int getHtmlData(QWidget* parent, const QString& url, QByteArray& ret);
 #endif // SYNCHTTPOBJECT_H

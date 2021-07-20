@@ -6,6 +6,7 @@ FnChart::FnChart(QWidget* parent) :
     ui(new Ui::FnChart)
 {
     ui->setupUi(this);
+    setMouseTracking(true);
     m_helper = new WidgetHelper(this);
     m_helper->setControl(this);
     resetOrigin();
@@ -72,6 +73,8 @@ void FnChart::addXLabel(QString caption)
 
 void FnChart::paintEvent(QPaintEvent* event)
 {
+    QStringList labelInfos;
+    QPoint curPt = m_helper->cursorPos();
     QPainter painter;
     painter.begin(this);
     //绘制线条
@@ -88,6 +91,7 @@ void FnChart::paintEvent(QPaintEvent* event)
         FnChartXLabel* xlabel = m_xlabels.at(i);
         xlabel->setX(m);
         QRect textRc = QRect(m - m_xLabelWidth / 2, m_originY + 6, m_xLabelWidth, 24);
+        xlabel->labelRect = QRect(m - m_xLabelWidth / 2, 0, m_xLabelWidth, height());
         painter.drawText(textRc, Qt::AlignCenter, xlabel->caption());
         labelMap.insert(xlabel->caption(), m);
         m += m_xLabelWidth;
@@ -113,6 +117,17 @@ void FnChart::paintEvent(QPaintEvent* event)
             int y = m_startY - v * 10;
 
             int x = labelMap[caption];
+
+            if ((abs(curPt.x() - x) <= 10) && (value != nullptr))
+            {
+                if (labelInfos.count() == 0)
+                {
+                    labelInfos << value->caption();
+                }
+                labelInfos << QString("%1    %2").arg(dataValues->caption()).arg(value->value());
+
+            }
+
             if (value != nullptr)
             {
                 value->setY(y);
@@ -163,6 +178,23 @@ void FnChart::paintEvent(QPaintEvent* event)
     pen.setStyle(Qt::DotLine);
     painter.setPen(pen);
     painter.drawLine(0, m_startY, width(), m_startY);
+    painter.drawLine(curPt.x(), 0, curPt.x(), height());
+    if (labelInfos.count() > 0)
+    {
+        painter.setPen(Qt::black);
+        int t = curPt.y();
+        for (int i = 0; i < labelInfos.count(); i++)
+        {
+            QFont font = painter.font();
+            font.setBold(i == 0 ? true : false);
+            painter.setFont(font);
+
+            painter.drawText(curPt.x() + 6, t, labelInfos[i]);
+            t += 24;
+
+        }
+
+    }
     painter.end();
 }
 
@@ -189,9 +221,10 @@ void FnChart::mouseMoveEvent(QMouseEvent* event)
         m_startX += x;
         m_startY += y;
         m_helper->setMousedownPoint(pt);
-        update();
+
 
     }
+    update();
 
 }
 
@@ -221,6 +254,13 @@ void FnChart::mouseDoubleClickEvent(QMouseEvent* event)
         }
 
     }
+    update();
+}
+
+void FnChart::wheelEvent(QWheelEvent* event)
+{
+    int x = event->angleDelta().y();
+    m_startX += x;
     update();
 }
 

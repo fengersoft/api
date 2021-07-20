@@ -2,6 +2,7 @@
 #define FNCHARTXLABEL_H
 
 #include <QObject>
+#include <QRect>
 
 class FnChartXLabel : public QObject
 {
@@ -18,6 +19,7 @@ public:
 
     int y() const;
     void setY(int y);
+    QRect labelRect;
 
 signals:
 

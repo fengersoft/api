@@ -46,6 +46,7 @@ protected:
     void keyPressEvent(QKeyEvent* event);
     void resizeEvent(QResizeEvent* event);
     void mouseDoubleClickEvent(QMouseEvent* event);
+    void wheelEvent(QWheelEvent* event);
 private:
     Ui::FnChart* ui;
     int m_originX;

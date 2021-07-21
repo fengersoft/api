@@ -134,14 +134,14 @@ void FnChart::paintEvent(QPaintEvent* event)
                 value->setX(x);
 
             }
-
+            QPoint pt = QPoint(x, y);
             if (j == 0)
             {
                 prePt = QPoint(x, y);
             }
             else
             {
-                QPoint pt = QPoint(x, y);
+
                 QPointF tempPt1 = QPointF((pt.x() + prePt.x()) / 2, prePt.y());
                 QPointF tempPt2 = QPointF((pt.x() + prePt.x()) / 2, pt.y());
                 QPainterPath path;
@@ -152,6 +152,10 @@ void FnChart::paintEvent(QPaintEvent* event)
 
                 prePt = pt;
             }
+            painter.setBrush(QBrush(dataValues->color()));
+            painter.drawEllipse(pt.x() - 4, pt.y() - 4, 8, 8);
+            painter.setBrush(Qt::NoBrush);
+
         }
         painter.restore();
     }

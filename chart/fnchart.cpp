@@ -92,7 +92,11 @@ void FnChart::paintEvent(QPaintEvent* event)
         xlabel->setX(m);
         QRect textRc = QRect(m - m_xLabelWidth / 2, m_originY + 6, m_xLabelWidth, 24);
         xlabel->labelRect = QRect(m - m_xLabelWidth / 2, 0, m_xLabelWidth, height());
-        painter.drawText(textRc, Qt::AlignCenter, xlabel->caption());
+        if (m_xLabelWidth >= 120)
+        {
+            painter.drawText(textRc, Qt::AlignCenter, xlabel->caption());
+        }
+
         labelMap.insert(xlabel->caption(), m);
         m += m_xLabelWidth;
     }
@@ -264,7 +268,18 @@ void FnChart::mouseDoubleClickEvent(QMouseEvent* event)
 void FnChart::wheelEvent(QWheelEvent* event)
 {
     int x = event->angleDelta().y();
-    m_startX += x;
+    qDebug() << x;
+    if (qApp->keyboardModifiers() == Qt::ControlModifier)
+    {
+        qDebug() << "Qt::AltModifier" << x;
+        m_xLabelWidth += (x > 0 ? 10 : -10);
+
+    }
+    else
+    {
+        m_startX += x;
+    }
+
     update();
 }
 

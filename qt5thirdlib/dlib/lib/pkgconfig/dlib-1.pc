@@ -1,0 +1,8 @@
+libdir=E:/github/dlib/build/install/lib
+includedir=E:/github/dlib/build/install/include
+
+Name: dlib
+Description: Numerical and networking C++ library
+Version: 19.24.99
+Libs: -L${libdir} -ldlib ws2_32 winmm comctl32 gdi32 imm32
+Cflags: -I${includedir} 

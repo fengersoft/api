@@ -1,0 +1,14 @@
+prefix=host
+exec_prefix=${prefix}
+libdir=host/lib
+includedir=host/include
+
+Name: libavformat
+Description: FFmpeg container format library
+Version: 58.42.101
+Requires: 
+Requires.private: libavcodec >= 58.81.100, libswresample >= 3.6.100, libavutil >= 56.42.102
+Conflicts:
+Libs: -L${libdir}  -lavformat 
+Libs.private: -lm
+Cflags: -I${includedir}
